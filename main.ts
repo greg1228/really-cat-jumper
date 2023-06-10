@@ -389,7 +389,7 @@ function startLevel () {
         tiles.setTileAt(value7, assets.tile`tile0`)
         animation.runMovementAnimation(
         fireball,
-        "c 0 -100 0 100 0 0",
+        "0 -100 0 100 0 0",
         2000,
         true
         )
