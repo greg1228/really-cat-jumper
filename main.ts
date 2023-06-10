@@ -2,12 +2,62 @@ namespace SpriteKind {
     export const Coin = SpriteKind.create()
     export const Flower = SpriteKind.create()
     export const Fireball = SpriteKind.create()
+    export const attack = SpriteKind.create()
 }
 /**
  */
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (Hops_and_Paw.vy == 0) {
+        Hops_and_Paw.vy = -150
+    }
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Coin, function (sprite, otherSprite) {
     info.changeScoreBy(1)
     otherSprite.destroy()
+})
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (time == 0) {
+        time = 2
+        if (Hops_and_Paw.vx < 0) {
+            projectile = sprites.createProjectileFromSprite(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . 5 . . . 5 . . 
+                . . . . . . . . 5 . . . 5 . . . 
+                . . . . . . . 5 . . . 5 . . . . 
+                . . . . . . . 5 . . . 5 . . . . 
+                . . . . . . . . 5 . . . 5 . . . 
+                . . . . . . . . . 5 . . . 5 . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, Hops_and_Paw, -100, 0)
+        } else {
+            projectile = sprites.createProjectileFromSprite(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . 5 . . . 5 . . . . . . . . . 
+                . . . 5 . . . 5 . . . . . . . . 
+                . . . . 5 . . . 5 . . . . . . . 
+                . . . . 5 . . . 5 . . . . . . . 
+                . . . 5 . . . 5 . . . . . . . . 
+                . . 5 . . . 5 . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, Hops_and_Paw, 100, 0)
+        }
+    }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (Hops_and_Paw.vy == 0) {
@@ -346,6 +396,9 @@ function startLevel () {
         fireball.startEffect(effects.fire)
     }
 }
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    otherSprite.destroy(effects.fire, 500)
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy()
     if (Hops_and_Paw.y < otherSprite.y) {
@@ -357,8 +410,13 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 let fireball: Sprite = null
 let flower: Sprite = null
 let bee: Sprite = null
+let projectile: Sprite = null
+let time = 0
 let Hops_and_Paw: Sprite = null
 let current_level = 0
+game.showLongText("this game name is cat jump", DialogLayout.Bottom)
+game.showLongText("Attack is pressing button \"B\"", DialogLayout.Bottom)
+game.showLongText("Jump is pressing button \"A\"", DialogLayout.Bottom)
 scene.setBackgroundColor(9)
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -608,5 +666,10 @@ game.onUpdate(function () {
     if (Hops_and_Paw.vx < 0 || Hops_and_Paw.isHittingTile(CollisionDirection.Left)) {
         Hops_and_Paw.image.flipX()
         Hops_and_Paw.setImage(Hops_and_Paw.image)
+    }
+})
+game.onUpdateInterval(250, function () {
+    if (time > 0) {
+        time += -1
     }
 })
